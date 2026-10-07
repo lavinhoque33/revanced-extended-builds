@@ -25,6 +25,9 @@ version = "21.39.525"
 arch = "arm64-v8a"
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube"
 archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.youtube"
+# modified by lavinhoque33, 2026-10-07: APKMirror answers 403 to GitHub runners and the archive has no 21.39.525,
+# so the stock bundle is hosted in this repository's "stock" release. Only used while the version matches the file name.
+direct-dlurl = "https://github.com/lavinhoque33/revanced-extended-builds/releases/download/stock/com.google.android.youtube-21.39.525-arm64-v8a.apkm"
 excluded-patches = "'Custom header for YouTube'"
 included-patches = "'Visual preferences icons for YouTube' 'Return YouTube Username'"
 patcher-args = "-e 'Custom branding name for YouTube' -OappName='YouTube RVX' -e 'Custom branding icon for YouTube' -OappIcon='vanced_black' -e 'Theme' -OlightThemeBackgroundColor=#FFF9F9F9"
@@ -38,6 +41,9 @@ arch = "both"
 version = "9.40.51"
 apkmirror-dlurl = "https://www.apkmirror.com/apk/google-inc/youtube-music"
 archive-dlurl = "https://archive.org/download/jhc-apks/apks/com.google.android.apps.youtube.music"
+# modified by lavinhoque33, 2026-10-07: arm64-v8a comes from the archive; the archive has no arm-v7a 9.40.51 and
+# APKMirror answers 403 to GitHub runners, so arm-v7a comes from this repository's "stock" release.
+direct-dlurl = "https://github.com/lavinhoque33/revanced-extended-builds/releases/download/stock/com.google.android.apps.youtube.music-9.40.51-arm-v7a.apk"
 excluded-patches = "'Custom header for YouTube Music'"
 included-patches = "'Visual preferences icons for YouTube Music' 'Return YouTube Username' 'Disable music video in album'"
 patcher-args = "-e 'Custom branding name for YouTube Music' -OappName='YT Music RVX' -e 'Custom branding icon for YouTube Music' -OappIcon='vanced_black'"

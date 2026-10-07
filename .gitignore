@@ -7,3 +7,5 @@ test*
 build.md
 cmpr
 *-temporary-files
+signing.bks
+signing.p12

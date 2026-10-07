@@ -465,7 +465,8 @@ merge_splits() {
 		return 1
 	fi
 	# sign the merged stock apk
-	if ! OP=$(java -jar "$APKSIGNER" sign --ks ks-p12.keystore --ks-pass pass:123456789 --key-pass pass:123456789 --ks-key-alias jhc \
+	# modified by lavinhoque33, 2026-10-07: owner's key (see build.sh) instead of the public j-hc keystore.
+	if ! OP=$(java -jar "$APKSIGNER" sign --ks signing.p12 --ks-pass env:SIGNING_PASSWORD --key-pass env:SIGNING_PASSWORD --ks-key-alias "$SIGNING_ALIAS" \
 		--out "${output}" "${output}-unsigned"); then
 		epr "apksigner error: $OP"
 		return 1
@@ -683,8 +684,9 @@ patch_apk() {
 	local tmp_files
 	tmp_files="$(pwd)/$(mktemp -d -p "$TEMP_DIR")"
 
-	local cmd="java -jar '$cli_jar' patch '$stock_input' -o '$patched_apk' -p '$patches_jar' --keystore=ks.keystore \
---keystore-entry-password=123456789 --keystore-password=123456789 --signer=jhc --keystore-entry-alias=jhc -t '$tmp_files' $patcher_args"
+	# modified by lavinhoque33, 2026-10-07: owner's key; the password stays a variable so the printed command does not contain it.
+	local cmd="java -jar '$cli_jar' patch '$stock_input' -o '$patched_apk' -p '$patches_jar' --keystore=signing.bks \
+--keystore-entry-password=\"\$SIGNING_PASSWORD\" --keystore-password=\"\$SIGNING_PASSWORD\" --signer=\"\$SIGNING_ALIAS\" --keystore-entry-alias=\"\$SIGNING_ALIAS\" -t '$tmp_files' $patcher_args"
 
 	# TODO: remove this later
 	local cli_name

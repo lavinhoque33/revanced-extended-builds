@@ -21,6 +21,10 @@ Every build is published as a numbered release under [Releases](https://github.c
 
 `<arch>` is `arm64-v8a` (almost every phone) or `arm-v7a` (old 32-bit phones). The `stock` release only holds unmodified build inputs that GitHub's runners cannot download from APKMirror.
 
+**Signing:** every APK is signed with this repository's own key, which is kept in repository secrets. Before installing, you can check that the certificate's SHA-256 is
+`5F:91:55:46:4D:9D:FA:EA:02:DE:80:8C:22:0B:82:9C:00:DB:E9:9F:93:17:A8:AE:E7:1E:F7:98:F8:05:D7:7F`
+(for example with `apksigner verify --print-certs <file>.apk`, or the App Manager app). Build No. 1 used the builder's public default key: if you installed a non-root APK from it, uninstall it before installing a newer build.
+
 ## 📌 Configuration
 
 | | YouTube RVX | YouTube Music RVX |

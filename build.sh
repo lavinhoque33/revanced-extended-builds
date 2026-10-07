@@ -17,6 +17,10 @@ java --version >/dev/null || abort "\`java\` is not installed. install it with '
 zip --version >/dev/null || abort "\`zip\` is not installed. install it with 'apt install zip' or equivalent"
 
 set_prebuilts
+# modified by lavinhoque33, 2026-10-07: sign with the repository owner's key instead of the public j-hc keystore.
+# CI writes the files from secrets; locally, copy them here and export the password and alias.
+[ -f signing.bks ] && [ -f signing.p12 ] || abort "signing.bks/signing.p12 not found (repository secrets SIGNING_BKS_B64/SIGNING_P12_B64)"
+[ -n "${SIGNING_PASSWORD-}" ] && [ -n "${SIGNING_ALIAS-}" ] || abort "SIGNING_PASSWORD and SIGNING_ALIAS must be set"
 
 vtf() { if ! isoneof "${1}" "true" "false"; then abort "ERROR: '${1}' is not a valid option for '${2}': only true or false is allowed"; fi; }
 

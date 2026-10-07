@@ -466,7 +466,7 @@ merge_splits() {
 	fi
 	# sign the merged stock apk
 	# modified by lavinhoque33, 2026-10-07: owner's key (see build.sh) instead of the public j-hc keystore.
-	if ! OP=$(java -jar "$APKSIGNER" sign --ks signing.p12 --ks-pass env:SIGNING_PASSWORD --key-pass env:SIGNING_PASSWORD --ks-key-alias "$SIGNING_ALIAS" \
+	if ! OP=$(java -jar "$APKSIGNER" sign --ks signing.p12 --ks-pass "pass:${SIGNING_PASSWORD}" --key-pass "pass:${SIGNING_PASSWORD}" --ks-key-alias "$SIGNING_ALIAS" \
 		--out "${output}" "${output}-unsigned"); then
 		epr "apksigner error: $OP"
 		return 1

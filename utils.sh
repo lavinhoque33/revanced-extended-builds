@@ -193,8 +193,9 @@ get_latest_app_version() {
 	local content=""
 	local ver_file="patches/src/main/kotlin/app/morphe/patches/${app}/utils/compatibility/Constants.kt"
 
-	# New format only: fetch Constants.kt from app utils/compatibility path on main branch.
-	content=$(curl -fsL "https://raw.githubusercontent.com/${src}/main/${ver_file}" 2>/dev/null) || return 1
+	# New format only: fetch Constants.kt from app utils/compatibility path on the default branch.
+	# modified by lavinhoque33, 2026-10-07: HEAD (default branch) instead of main; the patches fork releases from rvx-latest.
+	content=$(curl -fsL "https://raw.githubusercontent.com/${src}/HEAD/${ver_file}" 2>/dev/null) || return 1
 
 	[ -n "$content" ] || return 1
 
@@ -1005,7 +1006,7 @@ module_prop() {
 name=${2}
 version=v${3}
 versionCode=${NEXT_VER_CODE}
-author=ev3rlin
+author=lavinhoque33 (builder by ev3rlin and j-hc)
 description=${4}" >"${6}/module.prop"
 
 	if [ "$ENABLE_MODULE_UPDATE" = true ]; then echo "updateJson=${5}" >>"${6}/module.prop"; fi

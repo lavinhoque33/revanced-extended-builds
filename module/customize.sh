@@ -195,5 +195,7 @@ rm -rf "${MODPATH:?}/bin" "$MODPATH/stock/"
 cp -f "$MODPATH/module.prop" "$MODPATH/module.prop.orig"
 
 ui_print "* Done"
-ui_print "  by ev3rlin (github.com/ev3rlin)"
+# modified by lavinhoque33, 2026-10-07
+ui_print "  by lavinhoque33 (github.com/lavinhoque33/revanced-extended-builds)"
+ui_print "  builder by ev3rlin and j-hc"
 ui_print " "

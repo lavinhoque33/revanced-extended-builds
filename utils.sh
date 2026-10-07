@@ -940,7 +940,11 @@ build_rv() {
 		local base_template
 		base_template=$(mktemp -d -p "$TEMP_DIR")
 		cp -a $MODULE_TEMPLATE_DIR/. "$base_template"
-		local upj="${table,,}-update.json"
+		# modified by lavinhoque33, 2026-10-07: URL-safe name. Per-arch tables are named like
+		# "YouTube-Music-RVX (arm64-v8a)", and the spaces/parentheses made the updateJson URL invalid.
+		local upj="${table,,}"
+		upj="${upj// /-}" upj="${upj//[()]/}"
+		upj="${upj}-update.json"
 
 		module_config "$base_template" "$pkg_name" "$version" "$arch"
 

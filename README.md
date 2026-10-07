@@ -12,12 +12,14 @@
 
 Prebuilt YouTube and YouTube Music with [lavinhoque33's ReVanced Extended patches](https://github.com/lavinhoque33/revanced-patches). Those patches are a fork of [anddea's patches](https://github.com/anddea/revanced-patches) with support for newer app versions and extra patches, such as **Restore Android Auto playlists**.
 
-Every build is published under [Releases](https://github.com/lavinhoque33/revanced-extended-builds/releases):
+Every build is published as a numbered release under [Releases](https://github.com/lavinhoque33/revanced-extended-builds/releases):
 
 | File | For |
 |---|---|
-| `youtube-revanced-extended-…-arm64-v8a.apk`, `youtube-music-revanced-extended-…-<arch>.apk` | Non-root: install like a normal app. Needs [MicroG-RE](https://github.com/MorpheApp/MicroG-RE) for Google sign-in. |
-| `…-magisk-….zip` | Root: flash in Magisk or KernelSU. The module installs the matching stock app and mounts the patched one over it. |
+| `youtube-revanced-extended-v<version>-arm64-v8a.apk`<br>`youtube-music-revanced-extended-v<version>-<arch>.apk` | Non-root: install like a normal app. It installs next to the original app under its own package name. Needs [MicroG-RE](https://github.com/MorpheApp/MicroG-RE) for Google sign-in. |
+| `youtube-revanced-extended-module-v<version>-arm64-v8a.zip`<br>`youtube-music-revanced-extended-module-v<version>-<arch>.zip` | Root: flash in Magisk or KernelSU. The module installs the matching stock app and mounts the patched one over it. |
+
+`<arch>` is `arm64-v8a` (almost every phone) or `arm-v7a` (old 32-bit phones). The `stock` release only holds unmodified build inputs that GitHub's runners cannot download from APKMirror.
 
 ## 📌 Configuration
 

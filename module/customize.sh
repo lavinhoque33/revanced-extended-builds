@@ -148,7 +148,10 @@ BASEPATHLIB=${BASEPATH}/lib/${ARCH}
 if [ $INS = true ] || [ -z "$(ls -A1 "$BASEPATHLIB")" ]; then
 	ui_print "* Extracting native libs"
 	if [ ! -d "$BASEPATHLIB" ]; then mkdir -p "$BASEPATHLIB"; else rm -f "$BASEPATHLIB"/* >/dev/null 2>&1 || :; fi
-	if op=$(unzip -o -j "$MODPATH/stock/base.apk" "lib/${ARCH_LIB}/*" -d "$BASEPATHLIB" 2>&1); then
+	# modified by lavinhoque33, 2026-10-10: with include-stock = "split" the libs live in the arch split, not in base.apk.
+	LIBSRC="$MODPATH/stock/split_config.$(echo "$ARCH_LIB" | tr - _).apk"
+	if [ ! -f "$LIBSRC" ]; then LIBSRC="$MODPATH/stock/base.apk"; fi
+	if op=$(unzip -o -j "$LIBSRC" "lib/${ARCH_LIB}/*" -d "$BASEPATHLIB" 2>&1); then
 		set_perm_recursive "${BASEPATH}/lib" 1000 1000 755 755 u:object_r:apk_data_file:s0
 	else
 		echo >&2 "ERROR: extracting native libs failed: '$op'"

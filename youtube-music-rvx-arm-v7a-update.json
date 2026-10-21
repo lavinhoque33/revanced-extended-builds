@@ -1,6 +1,6 @@
 {
-  "version": "v9.40.51 (patches 1.10.0.mpp)",
-  "versionCode": 18,
-  "zipUrl": "https://github.com/lavinhoque33/revanced-extended-builds/releases/download/18/youtube-music-revanced-extended-module-v9.40.51-arm-v7a.zip",
+  "version": "v9.40.51 (patches 1.10.1.mpp)",
+  "versionCode": 19,
+  "zipUrl": "https://github.com/lavinhoque33/revanced-extended-builds/releases/download/19/youtube-music-revanced-extended-module-v9.40.51-arm-v7a.zip",
   "changelog": "https://raw.githubusercontent.com/lavinhoque33/revanced-extended-builds/update/build.md"
 }

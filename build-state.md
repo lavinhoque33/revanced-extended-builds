@@ -1,7 +1,7 @@
 YouTube-Music-RVX (arm-v7a): 9.40.51  
 YouTube-RVX: 21.39.525  
 
-Patches: lavinhoque33/revanced-patches/patches-1.12.0.mpp  
-[Patches Changelog](https://github.com/lavinhoque33/revanced-patches/releases/tag/v1.12.0)
+Patches: lavinhoque33/revanced-patches/patches-1.13.0.mpp  
+[Patches Changelog](https://github.com/lavinhoque33/revanced-patches/releases/tag/v1.13.0)
 
 CLI: MorpheApp/morphe-cli/morphe-desktop-1.19.0-all.jar    

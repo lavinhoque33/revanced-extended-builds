@@ -88,7 +88,6 @@ jobs:
           echo "TAG=$NEXT_VER_CODE" >> $GITHUB_OUTPUT
           echo "NEXT_VER_CODE=$NEXT_VER_CODE" >> $GITHUB_OUTPUT
 
-      # modified by lavinhoque33, 2026-10-07: signing key from repository secrets (never committed).
       - name: Write signing key
         env:
           SIGNING_BKS_B64: ${{ secrets.SIGNING_BKS_B64 }}
@@ -98,10 +97,12 @@ jobs:
           printf '%s' "$SIGNING_P12_B64" | base64 -d > signing.p12
 
       - name: Build modules/APKs
+        id: build
+        continue-on-error: true
         run: if [ -f "config.json" ]; then ./build.sh config.json; else ./build.sh config.toml; fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REPOSITORY: $GITHUB_REPOSITORY
+          GITHUB_REPOSITORY: ${{ github.repository }}
           NEXT_VER_CODE: ${{ steps.release_info.outputs.NEXT_VER_CODE }}
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           SIGNING_ALIAS: lavinhoque33
@@ -235,3 +236,18 @@ jobs:
           MSG=${MSG:0:9450}
           POST="https://api.telegram.org/bot${TG_TOKEN}/sendMessage"
           curl -X POST --data-urlencode "parse_mode=Markdown" --data-urlencode "disable_web_page_preview=true" --data-urlencode "text=${MSG}" --data-urlencode "chat_id=${TG_CHAT}" "$POST"
+
+      - name: Check configured outputs
+        if: always()
+        env:
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+        run: |
+          if [ -s temp/missing-outputs ]; then
+            echo "::error::Missing configured outputs:"
+            cat temp/missing-outputs
+            exit 1
+          fi
+          if [ "$BUILD_OUTCOME" != success ]; then
+            echo "::error::Build modules/APKs did not complete successfully."
+            exit 1
+          fi

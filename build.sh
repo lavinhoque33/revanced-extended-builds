@@ -40,8 +40,7 @@ if [ "${2-}" = "--config-update" ]; then
 	config_update
 	exit 0
 fi
-# modified by lavinhoque33, 2026-10-07: sign with the repository owner's key instead of the public j-hc keystore.
-# CI writes the files from secrets; locally, copy them here and export the password and alias.
+# Sign with the owner's key. CI writes the files from secrets; locally, export the password and alias.
 [ -f signing.bks ] && [ -f signing.p12 ] || abort "signing.bks/signing.p12 not found (repository secrets SIGNING_BKS_B64/SIGNING_P12_B64)"
 [ -n "${SIGNING_PASSWORD-}" ] && [ -n "${SIGNING_ALIAS-}" ] || abort "SIGNING_PASSWORD and SIGNING_ALIAS must be set"
 
@@ -59,6 +58,8 @@ if [ "$ENABLE_MODULE_UPDATE" = true ] && [ -z "${GITHUB_REPOSITORY-}" ]; then
 	ENABLE_MODULE_UPDATE=false
 fi
 if ((COMPRESSION_LEVEL > 9)) || ((COMPRESSION_LEVEL < 0)); then abort "compression-level must be within 0-9"; fi
+
+prepare_build_outputs
 
 rm -rf module/bin/*/tmp.*
 for file in "$TEMP_DIR"/*/changelog.md; do
@@ -79,7 +80,7 @@ for table_name in $(toml_get_table_names); do
 	vtf "$enabled" "enabled"
 	if [ "$enabled" = false ]; then continue; fi
 	if ((idx >= PARALLEL_JOBS)); then
-		wait -n
+		wait -n || :
 		idx=$((idx - 1))
 	fi
 
@@ -108,6 +109,7 @@ for table_name in $(toml_get_table_names); do
 	app_args[app_name]=$(toml_get "$t" app-name) || app_args[app_name]=$table_name
 	app_args[patcher_args]=$(toml_get "$t" patcher-args) || app_args[patcher_args]=""
 	app_args[table]=$table_name
+	app_args[output_table]=$table_name
 	app_args[build_mode]=$(toml_get "$t" build-mode) && {
 		if ! isoneof "${app_args[build_mode]}" both apk module; then
 			abort "ERROR: build-mode '${app_args[build_mode]}' is not a valid option for '${table_name}': only 'both', 'apk' or 'module' is allowed"
@@ -152,7 +154,7 @@ for table_name in $(toml_get_table_names); do
 		app_args[arch]="arm-v7a"
 		app_args[module_prop_name]="${module_prop_name_b}-arm"
 		if ((idx >= PARALLEL_JOBS)); then
-			wait -n
+			wait -n || :
 			idx=$((idx - 1))
 		fi
 		idx=$((idx + 1))
@@ -167,7 +169,9 @@ for table_name in $(toml_get_table_names); do
 		build_rv "$(declare -p app_args)" &
 	fi
 done
-wait
+wait || :
+build_failed=false
+report_missing_outputs || build_failed=true
 _clean_tmp
 if [ -z "$(ls -A1 "${BUILD_DIR}")" ]; then abort "All builds failed."; fi
 
@@ -229,3 +233,4 @@ fi
 # [--- ---]
 
 pr "Done"
+if [ "$build_failed" = true ]; then exit 1; fi

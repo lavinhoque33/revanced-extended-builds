@@ -8,9 +8,9 @@ parallel-jobs = 1
 
 # modified by lavinhoque33, 2026-10-07: build from the lavinhoque33 fork of anddea's patches.
 patches-source = "lavinhoque33/revanced-patches"
-# modified by lavinhoque33, 2026-11-10: dev build of the YouTube and YouTube Music work. The exact tag is pinned
+# modified by lavinhoque33, 2026-11-12: dev build of the YouTube and YouTube Music work. The exact tag is pinned
 # because "dev" would pick anddea's old v4.4.0-dev.5 tag as the highest version.
-patches-version = "v1.34.0-dev.7"
+patches-version = "v1.34.2-dev.1"
 
 cli-source = "MorpheApp/morphe-cli"
 cli-version = "latest"

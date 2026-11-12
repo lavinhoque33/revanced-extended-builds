@@ -357,6 +357,53 @@ gh_dl() {
 	fi
 }
 
+direct_req() {
+	local url=$1 output=$2 repository="lavinhoque33/revanced-extended-builds"
+	local release_path tag asset_name asset_id
+	case "$url" in
+		"https://github.com/${repository}/releases/download/"*)
+			release_path=${url#"https://github.com/${repository}/releases/download/"}
+			tag=${release_path%%/*}
+			asset_name=${release_path#*/}
+			if ! asset_id=$(gh_req "https://api.github.com/repos/${repository}/releases/tags/${tag}" - |
+				jq -er --arg name "$asset_name" \
+					'.assets[] | select(.name == $name or (.name | @uri) == $name) | .id'); then
+				epr "Could not resolve GitHub release asset: $url"
+				return 1
+			fi
+			pr "Downloading '${asset_name}' through authenticated GitHub release asset API"
+			gh_dl "$output" "https://api.github.com/repos/${repository}/releases/assets/${asset_id}"
+			;;
+		*) req "$url" "$output" ;;
+	esac
+}
+
+prepare_build_outputs() {
+	: >"$TEMP_DIR/completed-outputs"
+	jq -r '
+		to_entries[] | select(.value | type == "object") | select(.value.enabled != false) |
+		. as $table |
+		(if .value.arch == "both" then ["arm64-v8a", "arm-v7a"] else [.value.arch // "all"] end)[] as $arch |
+		(if .value["build-mode"] == "both" then ["apk", "module"] else [.value["build-mode"] // "apk"] end)[] |
+		"\($table.key) | \($arch) | \(.)"
+	' <<<"$__TOML__" | sort -u >"$TEMP_DIR/expected-outputs"
+}
+
+record_build_output() {
+	[ -s "$4" ] || return 1
+	printf '%s | %s | %s\n' "$1" "$2" "$3" >>"$TEMP_DIR/completed-outputs"
+}
+
+report_missing_outputs() {
+	sort -u "$TEMP_DIR/completed-outputs" >"$TEMP_DIR/completed-outputs.sorted"
+	comm -23 "$TEMP_DIR/expected-outputs" "$TEMP_DIR/completed-outputs.sorted" >"$TEMP_DIR/missing-outputs"
+	if [ -s "$TEMP_DIR/missing-outputs" ]; then
+		epr "Missing configured outputs:"
+		cat "$TEMP_DIR/missing-outputs" >&2
+		return 1
+	fi
+}
+
 log() { echo -e "$1  " >>"build.md"; }
 get_highest_ver() {
 	local vers m
@@ -668,10 +715,10 @@ dl_direct() {
 		return 1
 	fi
 	if [ "${url##*.}" = "apkm" ]; then
-		req "$url" "${output}.apkm" || return 1
+		direct_req "$url" "${output}.apkm" || return 1
 		merge_splits "${output}.apkm" "$output"
 	else
-		req "$url" "${output}" || return 1
+		direct_req "$url" "${output}" || return 1
 	fi
 }
 get_direct_vers() { cut -d- -f2 <<<"$__DIRECT_APKNAME__"; }
@@ -937,13 +984,13 @@ build_rv() {
 				cp -f "$patched_apk" "$apk_output"
 			fi
 			pr "Built ${table} (non-root): '${apk_output}'"
+			record_build_output "${args[output_table]}" "$arch" "$build_mode" "$apk_output"
 			continue
 		fi
 		local base_template
 		base_template=$(mktemp -d -p "$TEMP_DIR")
 		cp -a $MODULE_TEMPLATE_DIR/. "$base_template"
-		# modified by lavinhoque33, 2026-10-07: URL-safe name. Per-arch tables are named like
-		# "YouTube-Music-RVX (arm64-v8a)", and the spaces/parentheses made the updateJson URL invalid.
+		# URL-safe name: per-arch table names contain spaces and parentheses.
 		local upj="${table,,}"
 		upj="${upj// /-}" upj="${upj//[()]/}"
 		upj="${upj}-update.json"
@@ -990,6 +1037,7 @@ build_rv() {
 		zip -"$COMPRESSION_LEVEL" -FSqr "${CWD}/${BUILD_DIR}/${module_output}" .
 		popd >/dev/null || :
 		pr "Built ${table} (root): '${BUILD_DIR}/${module_output}'"
+		record_build_output "${args[output_table]}" "$arch" "$build_mode" "${BUILD_DIR}/${module_output}"
 	done
 }
 

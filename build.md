@@ -1,3 +1,3 @@
 ### Changelog  
-Patches: lavinhoque33/revanced-patches/patches-1.37.2.mpp  
-[Patches Changelog](https://github.com/lavinhoque33/revanced-patches/releases/tag/v1.37.2)  
+Patches: lavinhoque33/revanced-patches/patches-1.37.3.mpp  
+[Patches Changelog](https://github.com/lavinhoque33/revanced-patches/releases/tag/v1.37.3)  

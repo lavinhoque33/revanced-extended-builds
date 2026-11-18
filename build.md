@@ -1,3 +1,3 @@
 ### Changelog  
-Patches: lavinhoque33/revanced-patches/patches-1.38.0.mpp  
-[Patches Changelog](https://github.com/lavinhoque33/revanced-patches/releases/tag/v1.38.0)  
+Patches: lavinhoque33/revanced-patches/patches-1.39.0.mpp  
+[Patches Changelog](https://github.com/lavinhoque33/revanced-patches/releases/tag/v1.39.0)  
